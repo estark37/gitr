@@ -1,0 +1,16 @@
+This is a little tool to mount a Github repository locally, so that you can
+browse it from the command line without cloning it.
+
+To mount a repo REPO by github user USERNAME in the directory DIR:
+$ cd src
+$ ./githubfs.rb USERNAME REPO DIR &
+
+Then you can cd into DIR and poke around. To unmount, kill the githubfs process
+and run "unmount DIR".
+
+TO DO:
+- speed it up by memoizing all the file system operations, and maybe
+  speculatively listing subdirectories, etc.
+- write a version of git-checkout that takes a ref, and writes it to a special
+  file, and GithubFS checks that file for which ref to use before each operation
+- write a verison of git-log that reads history from the github API
