@@ -9,14 +9,15 @@ require "github_connection"
 
 class GithubBrowser
 
-  attr_accessor :user, :repo
-  attr_reader :ref # will be attr_accessor later
+  attr_reader :user, :repo
+  attr_accessor :ref
 
-  def initialize(user, repo)
+  def initialize(user, repo, ref = "master")
     @conn = GithubConnection.new
     @user = user
     @repo = repo
-    @ref = "master"
+    @ref = ref
+    
   end
 
   def directory(path = "/")

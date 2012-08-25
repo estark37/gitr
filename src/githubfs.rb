@@ -5,12 +5,16 @@ require "github_browser"
 
 class GithubFS
 
-  attr_reader :user, :repo, :browser
+  attr_reader :user, :repo, :browser, :ref, :ref_file
 
   def initialize(user, repo)
     @user = user
     @repo = repo
+
+    @ref_file = "/.ref"
+
     @browser = GithubBrowser.new @user, @repo
+
   end
 
   def contents(path)
@@ -18,15 +22,28 @@ class GithubFS
   end
 
   def file?(path)
-    @browser.file? path
+    (path == @ref_file) ? true : (@browser.file? path)
   end
 
   def read_file(path)
-    @browser.file path
+    (path == @ref_file) ? @browser.ref : (@browser.file path)
   end
 
   def directory?(path)
     @browser.directory? path
+  end
+
+  def can_write?(path)
+    (path == @ref_file) ? true : false
+  end
+
+  def can_delete?(path)
+    (path == @ref_file) ? true : false
+  end
+
+  def write_to(path, contents)
+    return false unless path == @ref_file
+    @browser.ref = contents
   end
 
 end
