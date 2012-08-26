@@ -12,6 +12,8 @@ class GithubFS
     @repo = repo
 
     @ref_file = "/.ref"
+    @user_file = "/.user"
+    @repo_file = "/.repo"
 
     @browser = GithubBrowser.new @user, @repo
 
@@ -22,11 +24,25 @@ class GithubFS
   end
 
   def file?(path)
-    (path == @ref_file) ? true : (@browser.file? path)
+    case
+    when ([@ref_file, @user_file, @repo_file].include? path)
+      true
+    else
+      @browser.file? path
+    end
   end
 
   def read_file(path)
-    (path == @ref_file) ? @browser.ref : (@browser.file path)
+    case
+    when path == @ref_file
+      @browser.ref
+    when path == @user_file
+      @user
+    when path == @repo_file
+      @repo
+    else
+      @browser.file path
+    end
   end
 
   def directory?(path)
@@ -43,7 +59,8 @@ class GithubFS
 
   def write_to(path, contents)
     return false unless path == @ref_file
-    @browser.ref = contents
+    @browser.ref = contents.strip
+    return true
   end
 
 end
