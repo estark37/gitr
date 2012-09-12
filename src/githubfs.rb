@@ -17,36 +17,64 @@ class GithubFS
 
     @browser = GithubBrowser.new @user, @repo
 
+    # initialize caches
+    @contents_cache = {}
+    @is_file_cache = {}
+    @file_cache = {}
+    @is_directory_cache = {}
+
   end
 
   def contents(path)
-    @browser.directory path
+    if @contents_cache[path]
+      @contents_cache[path]
+    else
+      @contents_cache[path] = @browser.directory path
+      @contents_cache[path]
+    end
   end
 
   def file?(path)
+    if @is_file_cache[path]
+      @is_file_cache[path]
+    end
+
     case
     when ([@ref_file, @user_file, @repo_file].include? path)
-      true
+      @is_file_cache[path] = true
     else
-      @browser.file? path
+      @is_file_cache[path] = @browser.file? path
     end
+
+    @is_file_cache[path]
   end
 
   def read_file(path)
+    if @file_cache[path]
+      @file_cache[path]
+    end
+
     case
     when path == @ref_file
-      @browser.ref
+      @file_cache[path] = @browser.ref
     when path == @user_file
-      @user
+      @file_cache[path] = @user
     when path == @repo_file
-      @repo
+      @file_cache[path] = @repo
     else
-      @browser.file path
+      @file_cache[path] = @browser.file path
     end
+
+    @file_cache[path]
   end
 
   def directory?(path)
-    @browser.directory? path
+    if @is_directory_cache[path]
+      @is_directory_cache[path]
+    end
+
+    @is_directory_cache[path] = @browser.directory? path
+    @is_directory_cache[path]
   end
 
   def can_write?(path)
@@ -59,8 +87,18 @@ class GithubFS
 
   def write_to(path, contents)
     return false unless path == @ref_file
+    clear_caches
     @browser.ref = contents.strip
     return true
+  end
+
+  private
+  
+  def clear_caches()
+    @contents_cache = {}
+    @is_file_cache = {}
+    @file_cache = {}
+    @is_directory_cache = {}
   end
 
 end
