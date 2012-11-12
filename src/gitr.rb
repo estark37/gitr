@@ -1,10 +1,8 @@
 #!/usr/bin/ruby
 
-require "github_browser"
-
 class Gitr
 
-  attr_reader :user, :repo, :browser, :ref
+  attr_reader :user, :repo, :ref
 
   def initialize(root)
     @user_file = File.join(root, "/.user")
@@ -13,12 +11,11 @@ class Gitr
     read_repo
     @ref_file = File.join(root, "/.ref")
     read_ref
-    @browser = GithubBrowser.new @user, @repo, @ref
     
   end
 
   def checkout(ref)
-    @browser.ref = ref
+    @ref = ref
     write_ref
   end
 
@@ -28,7 +25,7 @@ class Gitr
   
   def write_ref
     File.open(@ref_file, 'w') do |f|
-      f.puts @browser.ref
+      f.puts @ref
     end
   end
 
