@@ -4,8 +4,8 @@ require "base64"
 
 require "github_connection"
 
-# Encapsulates a GithubConnection and provides higher-level methods like
-# reading the contents of a file.
+# Implements file system operations by making requests to a
+# GithubConnection.
 
 class GithubBrowser
 
@@ -16,8 +16,7 @@ class GithubBrowser
     @conn = GithubConnection.new
     @user = user
     @repo = repo
-    @ref = ref
-    
+    @ref = ref    
   end
 
   def directory(path = "/")
@@ -46,7 +45,7 @@ class GithubBrowser
     rescue
       false
     end
-  end
+  end 
 
 end
         

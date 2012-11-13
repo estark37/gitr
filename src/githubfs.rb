@@ -17,64 +17,56 @@ class GithubFS
 
     @browser = GithubBrowser.new @user, @repo
 
-    # initialize caches
-    @contents_cache = {}
-    @is_file_cache = {}
-    @file_cache = {}
-    @is_directory_cache = {}
-
   end
 
   def contents(path)
-    if @contents_cache[path]
-      @contents_cache[path]
-    else
-      @contents_cache[path] = @browser.directory path
-      @contents_cache[path]
-    end
+    @contents_cache ||= {}
+
+    @contents_cache[path] ||=
+      begin
+        @browser.directory path
+      end
   end
 
   def file?(path)
-    if @is_file_cache[path]
-      @is_file_cache[path]
-    end
+    @is_file_cache ||= {}
 
-    case
-    when ([@ref_file, @user_file, @repo_file].include? path)
-      @is_file_cache[path] = true
-    else
-      @is_file_cache[path] = @browser.file? path
-    end
-
-    @is_file_cache[path]
+    @is_file_cache[path] ||=
+      begin
+        case
+        when ([@ref_file, @user_file, @repo_file].include? path)
+          true
+        else
+          @browser.file? path
+        end
+      end
   end
 
   def read_file(path)
-    if @file_cache[path]
-      @file_cache[path]
-    end
-
-    case
-    when path == @ref_file
-      @file_cache[path] = @browser.ref
-    when path == @user_file
-      @file_cache[path] = @user
-    when path == @repo_file
-      @file_cache[path] = @repo
-    else
-      @file_cache[path] = @browser.file path
-    end
-
-    @file_cache[path]
+    @file_cache ||= {}
+    
+    @file_cache[path] ||=
+      begin
+        case
+        when path == @ref_file
+          @browser.ref
+        when path == @user_file
+          @user
+        when path == @repo_file
+          @repo
+        else
+          @browser.file path          
+        end
+      end
   end
 
   def directory?(path)
-    if @is_directory_cache[path]
-      @is_directory_cache[path]
-    end
+    @is_dir_cache ||= {}
 
-    @is_directory_cache[path] = @browser.directory? path
-    @is_directory_cache[path]
+    @is_dir_cache[path] ||=
+      begin
+        @browser.directory? path
+      end
   end
 
   def can_write?(path)
@@ -93,14 +85,14 @@ class GithubFS
   end
 
   private
-  
-  def clear_caches()
+
+  def clear_caches
     @contents_cache = {}
     @is_file_cache = {}
     @file_cache = {}
-    @is_directory_cache = {}
+    @is_dir_cache = {}
   end
-
+    
 end
 
 if ARGV.length != 3

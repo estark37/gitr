@@ -3,8 +3,9 @@
 require "rubygems"
 require "httpclient"
 require "json"
+require "base64"
 
-# Sends HTTP requests to Github, and returns JSON responses.
+# Sends Github API requests and returns JSON responses
 
 class GithubConnection
 
