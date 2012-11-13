@@ -5,6 +5,9 @@ To mount a repo REPO by github user USERNAME in the directory DIR:
 $ cd src
 $ ./githubfs.rb USERNAME REPO DIR &
 
+You will be asked for your github username and password. (githubfs will
+only be able to access public repositories; it only needs to authenticate
+to get more generous rate limits.)
 Then you can cd into DIR and poke around. To unmount, kill the githubfs process
 and run "unmount DIR".
 

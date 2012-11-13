@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+require "rubygems"
+require "highline/import"
 require "base64"
 
 require "github_connection"
